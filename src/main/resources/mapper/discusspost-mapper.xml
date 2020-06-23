@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lizehao.community.community.dao.DiscussPostMapper">
+
+    <sql id = "selectFields">
+        id, user_id, title, content, type, status, create_time, comment_count,score
+    </sql>
+
+    <!--  List只用声明<>里面的类型即可-->
+    <!--  XML里面if表示 如果test是true就拼接里面的语句，如果不是就不显示 -->
+    <!--  这里面的if是指，如果userId=0说明要查的不是用户主页，那就把帖子全部查询
+    如果userId!=0,说明查的是用户主页，那就拼接上条件，帖子的用户要是userId发的-->
+    <select id="selectDiscussPosts" resultType="DiscussPost">
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where status != 2
+        <if test="userId!=0">
+          and user_id = #{userId}
+        </if>
+        order by type desc, create_time desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectDiscussPostRows" resultType="Int">
+        select count(id)
+        from discuss_post
+        where status!=2
+        <if test="userId!=0">
+            and user_id = #{userId}
+        </if>
+
+    </select>
+</mapper>

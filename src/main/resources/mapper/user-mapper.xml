@@ -8,8 +8,9 @@
           id, username, password, salt, email, type, status, activation_code, header_url, create_time
     </sql>
 
+    <!-- 注意插入不用id，因为插入id是自动生成的 -->
     <sql id = "insertFields">
-          id, username, password, salt, email, type, status, activation_code, header_url, create_time
+          username, password, salt, email, type, status, activation_code, header_url, create_time
     </sql>
 
 
@@ -33,7 +34,7 @@
 
     <insert id ="insertUser" parameterType="User" keyProperty="id">
         insert into user (<include refid = "insertFields"></include>)
-        values(#(username), #(password), #(salt), #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
+        values(#{username}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
     </insert>
 
     <update id = "updateHeader">
