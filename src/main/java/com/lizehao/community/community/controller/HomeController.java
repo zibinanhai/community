@@ -35,10 +35,10 @@ public class HomeController {
         for (DiscussPost post:list) {
            //每取一个帖子信息，就创建一个Map，并把这个Map存在List<Map<String, Object>>里面
             Map<String, Object> map = new HashMap<>();
-            map.put("post",post);
+            map.put("post", post);
             //每个Post都是一个DiscussPost对象,获得的外键UserId，就是User里的主键Id
             User user = userService.finndUserById(post.getUserId());
-            map.put("user",user);
+            map.put("user", user);
             discussPosts.add(map);
 
         }
