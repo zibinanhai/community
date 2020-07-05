@@ -11,8 +11,9 @@ public class Page {
     private int limit = 10;
     //查数据总数(用来计算总页数)
     private int rows;
-    //查询路径（点页面选择的连接）
+    //查询路径（要显示的页面的路径）
     private String path;
+
 
     /**
      * setter getter方法
@@ -60,6 +61,7 @@ public class Page {
     }
     /**
      * 返回总页数
+     * 不用定义变量，只要写了getter方法，就可以在模板文件里直接取到
      */
     public int getTotal() {
 
@@ -83,5 +85,6 @@ public class Page {
         int to = current + 2;
         return to > getTotal() ? getTotal() : to;
     }
+
 
 }
