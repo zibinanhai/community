@@ -44,10 +44,7 @@ public class HomeController {
          * offset和limit：判断当前页面显示哪一页的帖子
          */
         List<DiscussPost> list = discussPostService.findDiscussPosts(0,page.getOffset(),page.getLimit());
-        /*
-         * 把上面的List遍历，存储在一个包含用户帖子和用户信息的List，用List嵌套Map实现
-         * Map里面只有两行数据，帖子和用户信息
-         */
+         // 把上面的List遍历，存储在一个包含用户帖子和用户信息的List，用List嵌套Map实现
         List<Map<String, Object>> discussPosts = new ArrayList<>();
 
 
@@ -56,7 +53,7 @@ public class HomeController {
             Map<String, Object> map = new HashMap<>();
             map.put("post", post);
             //每个Post都是一个DiscussPost对象,获得的外键UserId，就是User里的主键Id
-            User user = userService.finndUserById(post.getUserId());
+            User user = userService.findUserById(post.getUserId());
             map.put("user", user);
             discussPosts.add(map);
 
