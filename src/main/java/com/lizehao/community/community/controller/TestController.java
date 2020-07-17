@@ -1,12 +1,15 @@
 package com.lizehao.community.community.controller;
 
+import com.lizehao.community.community.util.CommunityUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -62,7 +65,8 @@ public class TestController {
     @RequestMapping(path = "/students", method = RequestMethod.GET)
     @ResponseBody
     public String getStudents (
-            //获取参数，false指这个参数没有也可已，默认是1
+            //有两种获取参数的方法，这种可以指定参数名、是否为必传、默认值等参数
+            //直接传参数也可以
             @RequestParam (name = "current",required = false,defaultValue = "1") int current,
             @RequestParam (name = "limit",required = false,defaultValue = "10") int limit){
         System.out.println(current);
@@ -161,4 +165,47 @@ public class TestController {
 
     }
 
+    // cookie示例
+
+    @RequestMapping(path = "/cookie/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String testCookie(HttpServletResponse response){
+        //创建cookie
+        Cookie cookie = new Cookie ("code", CommunityUtil.generateUUID());
+        //设置cookie生效范围，避免浪费网络资源
+        cookie.setPath("/community");
+        //cookie默认存在内存里，关掉浏览器就消失了
+        //设置cookie存储时间可以存在硬盘里(单位是秒)
+        cookie.setMaxAge(60*10);
+        //发送cookie
+        response.addCookie(cookie);
+
+
+        return "test cookie";
+    }
+
+    @RequestMapping(path = "/cookie/get",method = RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code ){
+        System.out.println(code);
+        return "get cookie";
+    }
+
+    //session示例
+    //session可以存各种类型数据 ，Cookie只能存String，而且少量
+    @RequestMapping(path = "/session/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setSession(HttpSession session){
+        session.setAttribute("id",1);
+        session.setAttribute("name", "test");
+        return "set session";
+    }
+
+    @RequestMapping(path = "/session/get",method = RequestMethod.GET)
+    @ResponseBody
+    public String getSession(HttpSession session){
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+        return "get session";
+    }
 }

@@ -1,6 +1,8 @@
 package com.lizehao.community.community.service;
 
+import com.lizehao.community.community.dao.LoginTicketMapper;
 import com.lizehao.community.community.dao.UserMapper;
+import com.lizehao.community.community.entity.LoginTicket;
 import com.lizehao.community.community.entity.User;
 import com.lizehao.community.community.util.CommunityConstant;
 import com.lizehao.community.community.util.CommunityUtil;
@@ -19,6 +21,10 @@ import java.util.Random;
 
 @Service
 public class UserService implements CommunityConstant {
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -82,10 +88,6 @@ public class UserService implements CommunityConstant {
         //注册用户，密码加密(5位salt）
         user.setSalt(CommunityUtil.generateUUID().substring(0,5));
 
-       /* StringBuffer stringBuffer = new StringBuffer(user.getPassword());
-        stringBuffer.append(user.getSalt());
-        是加密密码后+salt不是+salt后加密
-        */
         user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));
         user.setType(0);
         user.setStatus(0);
@@ -128,4 +130,78 @@ public class UserService implements CommunityConstant {
         }
     }
 
+    /**
+     * 和注册一样，返回一个Map，返回多种结果
+     * 用户传进来的是没有加密的密码，和数据库里的密码不一样，所以也需要加密一次再对比
+     * 凭证过期时间
+     */
+    public Map<String, Object> login(String username, String password, int expiredSeconds){
+        Map<String, Object> map = new HashMap<>();
+
+        //空值处理
+        if(StringUtils.isBlank(username)){
+            map.put("usernameMsg","账号不能为空");
+            return map;
+        }
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空");
+            return map;
+        }
+
+        //验证账号
+        User user = userMapper.selectByName(username);
+
+        if(user==null){
+            map.put("usernameMsg","账号不存在");
+            return map;
+        }
+
+        //看有没有激活
+        if(user.getStatus()==0){
+            map.put("usernameMsg","账号未激活");
+            return map;
+        }
+
+        //验证密码
+        password = CommunityUtil.md5(password + user.getSalt());
+        //只要是引用类型，哪怕是String，都用equals来比较,因为可能有不知道的地方用了new String导致==出错
+        if(!password.equals(user.getPassword())){
+            map.put("passwordMsg","密码不正确");
+            return map;
+        }
+
+        //以上都通过说明账号密码正确，现在要生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+ expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+
+        return map;
+
+    }
+
+    //UUID具有唯一性(MAC地址、时间等元素保证唯一性），所以两个用户不会有同一个ticket
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket,1);
+    }
+
+
+    //通过凭证查询用户
+    public LoginTicket findLoginTicket(String ticket){
+        return  loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public int updateHeader(int userId, String headerUrl){
+        return userMapper.updateHeader(userId, headerUrl);
+    }
+
+    //更改密码
+    public int updatePassword(int userId, String password) {
+        return userMapper.updatePassword(userId, password);
+
+    }
 }

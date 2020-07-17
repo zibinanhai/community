@@ -1,8 +1,10 @@
 package com.lizehao.community.community;
 
 import com.lizehao.community.community.dao.DiscussPostMapper;
+import com.lizehao.community.community.dao.LoginTicketMapper;
 import com.lizehao.community.community.dao.UserMapper;
 import com.lizehao.community.community.entity.DiscussPost;
+import com.lizehao.community.community.entity.LoginTicket;
 import com.lizehao.community.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +21,8 @@ import java.util.List;
 @ContextConfiguration(classes = CommunityApplication.class)
 public class MapperTests {
 
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -70,6 +74,25 @@ public class MapperTests {
         }
         int rows = discussPostMapper.selectDiscussPostRows(149);
         System.out.println(rows);
+    }
+
+    @Test
+    public void testInsertLoginTicket(){
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(12);
+        loginTicket.setStatus(1);
+        loginTicket.setTicket("abc");
+        //60分钟
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 *10));
+
+        loginTicketMapper.insertLoginTicket(loginTicket);
+    }
+
+    @Test
+    public void testSelectLoginTicket(){
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println(loginTicket);
+        loginTicketMapper.updateStatus("abc",0);
     }
 
 
