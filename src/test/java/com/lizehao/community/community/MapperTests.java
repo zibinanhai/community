@@ -2,9 +2,11 @@ package com.lizehao.community.community;
 
 import com.lizehao.community.community.dao.DiscussPostMapper;
 import com.lizehao.community.community.dao.LoginTicketMapper;
+import com.lizehao.community.community.dao.MessageMapper;
 import com.lizehao.community.community.dao.UserMapper;
 import com.lizehao.community.community.entity.DiscussPost;
 import com.lizehao.community.community.entity.LoginTicket;
+import com.lizehao.community.community.entity.Message;
 import com.lizehao.community.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,11 @@ import java.util.List;
 public class MapperTests {
 
     @Autowired
+    private MessageMapper messageMapper;
+
+    @Autowired
     private LoginTicketMapper loginTicketMapper;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -81,8 +87,8 @@ public class MapperTests {
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(12);
         loginTicket.setStatus(1);
-        loginTicket.setTicket("abc");
-        //60分钟
+        loginTicket.setTicket("qwerer");
+        //10分钟
         loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 *10));
 
         loginTicketMapper.insertLoginTicket(loginTicket);
@@ -93,6 +99,38 @@ public class MapperTests {
         LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
         System.out.println(loginTicket);
         loginTicketMapper.updateStatus("abc",0);
+    }
+
+    @Test
+    public void testSelectLetters() {
+        //会话列表，最新一条消息
+        List<Message> list = messageMapper.selectConversation(111,0,20);
+        for(Message message : list) {
+            System.out.println(message);
+        }
+
+        //会话数量
+        int conversationCount = messageMapper.selectConversationCount(111);
+        System.out.println(conversationCount);
+
+        //某个会话的所有私信
+        list = messageMapper.selectLetters("111-112",0,20);
+        for(Message message : list) {
+            System.out.println(message);
+        }
+
+        //某个会话的私信数量
+        int count = messageMapper.selectLetterCount("111-112");
+        System.out.println(count);
+
+        //未读消息数量
+        int unRead  = messageMapper.selectLetterUnreadCount(111,"111-112");
+        System.out.println(unRead);
+
+
+
+
+
     }
 
 

@@ -21,5 +21,14 @@ public interface DiscussPostMapper {
     //注意：如果只有一个参数并且sql里要动态地(比如<if>)使用这个参数时，必须加上Param
     int selectDiscussPostRows(@Param("userId") int userId);
 
+    int insertDiscussPost(DiscussPost discussPost);
+
+    //查询特定帖子
+    DiscussPost selectDiscussPostById(int id);
+
+    //更新帖子评论数量
+    int updateCommentCount(int id, int commentCount);
+
+
 
 }

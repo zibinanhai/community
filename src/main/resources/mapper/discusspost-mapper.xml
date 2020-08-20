@@ -8,6 +8,12 @@
         id, user_id, title, content, type, status, create_time, comment_count,score
     </sql>
 
+    <sql id = "insertFields">
+        user_id, title, content, type, status, create_time, comment_count,score
+    </sql>
+
+
+
     <!--  List只用声明<>里面的类型即可-->
     <!--  XML里面if表示 如果test是true就拼接里面的语句，如果不是就不显示 -->
     <!--  这里面的if是指，如果userId=0说明要查的不是用户主页，那就把帖子全部查询
@@ -32,4 +38,20 @@
         </if>
 
     </select>
+
+    <insert id="insertDiscussPost" parameterType="DiscussPost">
+        insert into discuss_post (<include refid="insertFields"></include>)
+        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
+    </insert>
+
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select <include refid="selectFields"></include>
+        from discuss_post
+        where id = #{id}
+    </select>
+
+    <update id="updateCommentCount">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+
 </mapper>
