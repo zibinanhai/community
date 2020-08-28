@@ -1,5 +1,5 @@
 # Hackers community
-## 这是一个基于Spring Boot、SSM、Redis、Kafka、Elasticsearch等技术的社区项目
+* 这是一个基于Spring Boot、SSM、Redis、Kafka、Elasticsearch等技术的社区项目，以下是我的开发过程和笔记
 ## [第一篇 Spring Boot、Maven入门以及开发环境配置](https://lizehao.info/第一篇Spring-Boot、Maven入门以及开发环境配置/)
 ## [第二篇 Spring入门](https://lizehao.info/第二篇-Spring入门/)
 ## [第三篇 Spring MVC和HTTP](https://lizehao.info/%E7%AC%AC%E4%B8%89%E7%AF%87-Spring-MVC%E5%92%8CHTTP/)
